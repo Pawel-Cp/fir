@@ -3,7 +3,6 @@ package org.example.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Entity
 @Table(name = "complaints")
@@ -15,7 +14,12 @@ public class Complaint {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    private String complainantName;
+    @ManyToOne
+    @JoinColumn(name = "complainant_user_id")
+    private User complainantUser;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    private Fir fir;
 
     private String contactInfo;
 
@@ -23,19 +27,18 @@ public class Complaint {
 
     private LocalDate date;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    private Fir fir;
+
 
     public Long getId() {
         return id;
     }
 
-    public String getComplainantName() {
-        return complainantName;
+    public User getComplainantName() {
+        return complainantUser;
     }
 
-    public void setComplainantName(String complainantName) {
-        this.complainantName = complainantName;
+    public void setComplainantName(User complainantUser) {
+        this.complainantUser = complainantUser;
     }
 
     public String getContactInfo() {
@@ -87,7 +90,7 @@ public class Complaint {
     public String toString() {
         return "Complaint{"
                 + "id=" + id
-                + ", complainantName='" + complainantName + '\''
+                + ", complainantName='" + complainantUser + '\''
                 + ", contactInfo='" + contactInfo + '\''
                 + ", statement='" + statement + '\''
                 + ", date=" + date

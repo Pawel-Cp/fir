@@ -1,10 +1,11 @@
 package org.example.dao.impl;
 
+import java.util.Optional;
 import org.example.dao.ComplaintDao;
 import org.example.exception.DataProcessingException;
 import org.example.lib.Dao;
 import org.example.model.Complaint;
-import org.example.model.Fir;
+import org.example.model.User;
 import org.example.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -38,14 +39,15 @@ public class ComplaintDaoImpl implements ComplaintDao {
     }
 
     @Override
-    public Complaint findById(Long id) {
+    public Optional<Complaint> findById(Long id) {
         try (Session session = HibernateUtil.INSTANCE.getSessionFactory().openSession()) {
             Query<Complaint> complaintQuery = session.createQuery("FROM Complaint c "
                     + " LEFT JOIN FETCH c.fir f "
                     + " LEFT JOIN FETCH f.crime cr "
+                    + " LEFT JOIN FETCH c.complainantUser cu "
                     + " WHERE c.id = :id ", Complaint.class);
             complaintQuery.setParameter("id", id);
-            return complaintQuery.getSingleResult();
+            return complaintQuery.uniqueResultOptional();
         } catch (Exception e) {
             throw new DataProcessingException("Can't get complaint with id: " + id, e);
         }
@@ -62,23 +64,38 @@ public class ComplaintDaoImpl implements ComplaintDao {
     }
 
     @Override
-    public boolean updateStatus(Long id, Complaint.Status newStatus) {
-        Complaint complaintToUpdate = findById(id);
+    public Optional<Complaint> findByUser(User user) {
+        try (Session session = HibernateUtil.INSTANCE.getSessionFactory().openSession()) {
+            Query<Complaint> complaintQuery = session.createQuery("FROM Complaint c"
+                    + " LEFT JOIN FETCH c.fir f "
+                    + " LEFT JOIN FETCH f.crime cr "
+                    + " LEFT JOIN FETCH c.complainantUser cu "
+                    + " WHERE c.complainantUser = :user ", Complaint.class);
+            complaintQuery.setParameter("user", user);
+            return complaintQuery.uniqueResultOptional();
+        } catch (Exception e) {
+            throw new DataProcessingException("Can't get user: " + user + " from DB!", e);
+        }
+    }
+
+    @Override
+    public void delete(Complaint complaint) {
         Session session = null;
-    }
-
-    @Override
-    public void delete(Long id) {
-
-    }
-
-    @Override
-    public Complaint assignFirToComplaint(Long complaintId, Fir fir) {
-        return null;
-    }
-
-    @Override
-    public void removeFir(Long firId) {
-
+        Transaction transaction = null;
+        try {
+            session = HibernateUtil.INSTANCE.getSessionFactory().openSession();
+            transaction = session.beginTransaction();
+            session.remove(complaint);
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw new DataProcessingException("Can't delete complaint with id: " + complaint, e);
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
     }
 }

@@ -2,7 +2,7 @@ package org.example.model;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "crimes")
@@ -17,8 +17,8 @@ public class Crime {
     @Column(nullable = false)
     private String description;
 
-    @Column(name = "date_time", nullable = false)
-    private LocalDateTime dateTime;
+    @Column(name = "date", nullable = false)
+    private LocalDate date;
 
     @Column(nullable = false)
     private String location;
@@ -51,12 +51,12 @@ public class Crime {
         this.location = location;
     }
 
-    public LocalDateTime getDateTime() {
-        return dateTime;
+    public LocalDate getDateTime() {
+        return date;
     }
 
-    public void setDateTime(LocalDateTime dateTime) {
-        this.dateTime = dateTime;
+    public void setDateTime(LocalDate dateTime) {
+        this.date = dateTime;
     }
 
     public String getDescription() {
@@ -81,7 +81,7 @@ public class Crime {
                 + "id=" + id
                 + ", crimeType='" + crimeType + '\''
                 + ", description='" + description + '\''
-                + ", dateTime=" + dateTime
+                + ", dateTime=" + date
                 + ", location='" + location + '\''
                 + ", fir=" + fir
                 + '}';
