@@ -1,9 +1,6 @@
 package org.example.dao;
 
 import org.example.model.Complaint;
-import org.example.model.Fir;
-
-import java.util.List;
 
 public interface ComplaintDao {
 
@@ -13,12 +10,13 @@ public interface ComplaintDao {
 
     List<Complaint> findAll();
 
-    boolean updateStatus(Long id, Complaint.Status newStatus);
+    Complaint findByUser(User user);
+
+    boolean updateStatus(Complaint complaint, Complaint.Status newStatus);
 
     void delete(Long id);
 
     Complaint assignFirToComplaint(Long complaintId, Fir fir);
 
-    void removeFir(Long firId);
-
+    Complaint removeFir(Long firId);
 }
