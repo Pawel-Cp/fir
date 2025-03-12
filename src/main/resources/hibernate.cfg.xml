@@ -1,0 +1,16 @@
+<hibernate-configuration>
+    <session-factory>
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+        <property name="connection.url">jdbc:mysql://localhost:3306/fir</property>
+        <property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+        <property name="connection.username">root</property>
+        <property name="connection.password">Capi2001@</property>
+        <property name="show_sql">true</property>
+        <property name="hbm2ddl.auto">validate</property>
+        <mapping class="org.example.model.Criminal"/>
+        <mapping class="org.example.model.Crime"/>
+        <mapping class="org.example.model.Complaint"/>
+        <mapping class="org.example.model.Fir"/>
+        <mapping class="org.example.model.User"/>
+    </session-factory>
+</hibernate-configuration>
